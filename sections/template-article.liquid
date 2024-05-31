@@ -62,7 +62,25 @@
   {% if article.comments_enabled? %}
     <div id="comment" class="my-8">
       {% if article.comments_count > 0 %}
-        <p>Hello World</p>
+        <div class="items-center justify-center flex-1 max-w-4xl px-4 mx-auto">
+          <h1 class="mb-4 text-lg font-medium">See what people are saying</h1>
+
+          {% paginate article.comments by 5 %}
+            {% for comment in article.comments %}
+              <div class="flex-1 px-4 py-2 my-4 leading-relaxed border sm:px-6 sm:py-4">
+                <span class="mr-2 font-bold comment-author">{{ comment.author }}</span>
+                <span class="text-xs text-gray-400">
+                  {{ comment.created_at | date: format: 'default' }}</span>
+                <p class="text-sm">{{ comment.content }}</p>
+              </div>
+            {% endfor %}
+
+            {% if paginate.pages > 1 %}
+              {{ paginate | default_pagination }}
+
+            {% endif %}
+          {% endpaginate %}
+        </div>
       {% else %}
         <p>No comments yet</p>
       {% endif %}
@@ -72,6 +90,35 @@
       {% form 'new_comment'
         , article %}
         <div class="items-center justify-center flex-1 max-w-4xl px-4 mx-auto">
+
+          {% if form.errors %}
+            <div class="p-5 border ">
+              <div class="flex items-center w-full mr-3 flex-grox">
+                <div class="text-red-500">
+                  {% render 'icon-failed' %}
+                </div>
+                <div class="ml-3 text-sm font-medium">
+                  <p>Oh no! your comment is not posted!</p>
+                </div>
+              </div>
+              <ul class="px-4 mb-3 list-decimal ml-7">
+                {% for error in form.errors %}
+                  <li>
+                    <span>{{ form.error.messages[error] }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% elsif form.posted_successfully? %}
+            <div class="flex flex-row items-center w-full p-5 my-3">
+              <div class="text-green-500">
+                {% render 'icon-success' %}
+              </div>
+              <p class="ml-3 text-sm font-medium">Your comment was posted successfully!</p>
+            </div>
+
+          {% endif %}
+
           <div class="px-1 mb-3 md:flex ">
             <div class="px-3 md:w-1/2">
               <label for="comment_author" class="mb-2 text-xs font-medium text-gray-700 uppercase">Name</label>
