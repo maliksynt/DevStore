@@ -81,14 +81,15 @@
               </div>
             {% endfor %}
 
-            {% if paginate.pages > 1 %}
-              {{ paginate | default_pagination }}
+            <div class="max-w-6xl mx-auto ">
+              {% render "pagination"
+                , pagination: paginate %}
+            </div>
 
-            {% endif %}
           {% endpaginate %}
         </div>
       {% else %}
-        <p>No comments yet</p>
+
       {% endif %}
     </div>
 
