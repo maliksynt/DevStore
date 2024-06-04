@@ -1,0 +1,52 @@
+<div class="container mx-auto">
+  {% paginate search.results by 10 %}
+    <h1 class="my-4 text-xl text-center">Search results</h1>
+
+    <div class="flex items-center justify-center">
+      <form
+        action="{{ routes.search_url }}"
+        method="get"
+        class="flex border rounded">
+        <input
+          class="px-4 py-2 border-none w-80"
+          type="search"
+          name="q"
+          placeholder="Search"
+          value="{{ search.terms |  escape }}">
+        <button type="submit" class="px-4 text-white bg-gray-900 border hover:bg-gray-700">Search</button>
+      </form>
+    </div>
+
+    {% if search.performed %}
+      {% if search.results.size > 0 %}
+        <div class="max-w-6xl mx-auto">
+          <div class="my-10 text-center text-gray-500">{{ search.results.size }} results for the search terms: {{ search.terms }}</div>
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {% for item in search.results %}
+
+              {% case item.object_type %}
+                {% when 'product' %}
+                  {% render 'product-card'
+                    , product: item
+                    , vendor: true %}
+                  {% else %}
+
+              {% endcase %}
+            {% endfor %}
+          </div>
+        </div>
+
+      {% else %}
+        <div class="mr-4 text-center">
+          <p>No results found for the search terms: {{ search.terms }}</p>
+        </div>
+      {% endif %}
+
+
+    {% endif %}
+
+
+    {% render 'pagination'
+      , pagination: paginate %}
+  {% endpaginate %}
+</div>
